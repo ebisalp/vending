@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vending Expiration Decipher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Vending Expiration Decipher</h1>
+
+    <form id="decipherForm">
+      <label for="productType">Select Product Type:</label>
+      <select id="productType">
+        <option value="soda">Soda</option>
+        <option value="monster">Monster Energy Drink</option>
+      </select>
+
+      <div id="sodaInput" class="input-section">
+        <label for="code">Enter Expiration Code:</label>
+        <input type="text" id="code">
+
+        <label for="sodaType">Select Soda Type:</label>
+        <select id="sodaType">
+          <option value="diet">Diet</option>
+          <option value="regular">Regular</option>
+        </select>
+      </div>
+
+      <div id="monsterInput" class="input-section" style="display: none;">
+        <label for="monsterCode">Enter Production Code:</label>
+        <input type="text" id="monsterCode">
+      </div>
+
+      <button type="submit">Decipher</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById("productType").addEventListener("change", function () {
+      const productType = this.value;
+      document.getElementById("sodaInput").style.display = productType === "soda" ? "block" : "none";
+      document.getElementById("monsterInput").style.display = productType === "monster" ? "block" : "none";
+    });
+
+    document.getElementById("decipherForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const productType = document.getElementById("productType").value;
+      const resultDiv = document.getElementById("result");
+
+      if (productType === "soda") {
+        // Soda Deciphering Logic
+        const code = document.getElementById("code").value.toUpperCase();
+        const sodaType = document.getElementById("sodaType").value;
+
+        const months = {
+          A: "January", B: "February", C: "March", D: "April",
+          E: "May", F: "June", G: "July", H: "August",
+          J: "September", K: "October", L: "November", M: "December"
+        };
+
+        if (!months[code[0]] || isNaN(code[1]) || isNaN(code.slice(2, 5))) {
+          resultDiv.textContent = "Invalid soda code format.";
+          return;
+        }
+
+        const month = months[code[0]];
+        const year = 2000 + parseInt(code[1]);
+        const dayOfYear = parseInt(code.slice(2, 5));
+        const productionDate = new Date(year, 0, dayOfYear);
+        const expirationMonths = sodaType === "diet" ? 6 : 9;
+        const expirationDate = new Date(productionDate);
+        expirationDate.setMonth(productionDate.getMonth() + expirationMonths);
+
+        resultDiv.innerHTML = `
+          <p><strong>Production Date:</strong> ${productionDate.toDateString()}</p>
+          <p><strong>Expiration Date:</strong> ${expirationDate.toDateString()}</p>
+        `;
+      } else if (productType === "monster") {
+        // Monster Energy Deciphering Logic
+        const code = document.getElementById("monsterCode").value.toUpperCase();
+        const months = {
+          A: "January", B: "February", C: "March", D: "April",
+          E: "May", F: "June", G: "July", H: "August",
+          J: "September", K: "October", L: "November", M: "December"
+        };
+
+        if (!months[code[0]] || isNaN(code.slice(1, 3)) || isNaN(code.slice(3, 5))) {
+          resultDiv.textContent = "Invalid Monster code format.";
+          return;
+        }
+
+        const month = months[code[0]];
+        const year = 2000 + parseInt(code.slice(1, 3));
+        const day = parseInt(code.slice(3, 5));
+        const productionDate = new Date(year, Object.keys(months).indexOf(code[0]), day);
+        const expirationDate = new Date(productionDate);
+        expirationDate.setFullYear(productionDate.getFullYear() + 2);
+
+        resultDiv.innerHTML = `
+          <p><strong>Production Date:</strong> ${productionDate.toDateString()}</p>
+          <p><strong>Expiration Date:</strong> ${expirationDate.toDateString()}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
