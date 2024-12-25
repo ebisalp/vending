@@ -68,7 +68,7 @@
         }
 
         const month = months[code[0]];
-        const year = 2000 + parseInt(code[1]);
+        const year = 2020 + parseInt(code[1]); // Adjusted year calculation
         const dayOfYear = parseInt(code.slice(2, 5));
         const productionDate = new Date(year, 0, dayOfYear);
         const expirationMonths = sodaType === "diet" ? 6 : 9;
